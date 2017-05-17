@@ -24,6 +24,9 @@ int current_speed = drive_speed;
 int step_size = 5;
 int speed_change = 10;
 
+// Mode control for easier driving
+bool normal_mode = true;
+
 // Getting the 4 DC motors - named by location
 Adafruit_DCMotor *dcMotorFR = DC_Shield.getMotor(1);
 Adafruit_DCMotor *dcMotorFL = DC_Shield.getMotor(2);
@@ -137,19 +140,43 @@ void loop() {
     	char c = Console.read(); // read the next char received
         
         if (c == 'f' || c == 'F') {
-          	moveForward(drive_speed);
+          	if (normal_mode) {
+                moveForward(drive_speed);
+            }
+
+            else {
+                moveBackward(drive_speed);
+            }
         }
         
         else if (c == 'b' || c == 'B') {
-          	moveBackward(drive_speed);
+          	if (normal_mode) {
+              moveBackward(drive_speed);
+            }
+
+            else {
+              moveForward(drive_speed);
+            }
         } 
        	
        	else if (c == 'l' || c == 'L') {
-          	turnLeft(drive_speed);
+          	if (normal_mode) {
+              turnLeft(drive_speed);
+            }
+
+            else {
+              turnRight(drive_speed);
+            }
         } 
         
         else if (c == 'r' || c == 'R') {
-          	turnRight(drive_speed);
+          	if (normal_mode) {
+              turnRight(drive_speed);
+            }
+
+            else {
+              turnLeft(drive_speed);
+            }
         } 
    
    		else if (c == 's' || c == 'S') {
@@ -174,6 +201,10 @@ void loop() {
     		Console.println("Stepping Backward");
     		stepper->step(step_size,BACKWARD,SINGLE);
   		}
+
+      else if (c == 'm' || c == 'M') {
+        normal_mode = !normal_mode;
+      }
   	}
 
   	else {
