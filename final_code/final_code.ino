@@ -102,10 +102,11 @@ void stopVehicle() {
 }
 
 void changeSpeed(int speed) {
-	dcMotorFR->setSpeed(drive_speed);  
-    dcMotorFL->setSpeed(drive_speed);
-    dcMotorBR->setSpeed(drive_speed);
-    dcMotorBL->setSpeed(drive_speed);
+	  Console.println(speed);
+	  dcMotorFR->setSpeed(speed);  
+    dcMotorFL->setSpeed(speed);
+    dcMotorBR->setSpeed(speed);
+    dcMotorBL->setSpeed(speed);
 }
 
 // Setup code
@@ -176,6 +177,9 @@ void loop() {
   	}
 
   	else {
-  		changeSpeed(current_speed - speed_change);
+      if (current_speed > 0) {
+  		  current_speed = current_speed - speed_change;
+  		  changeSpeed(current_speed);
+      }
   	}
 }
