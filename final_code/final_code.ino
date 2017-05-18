@@ -21,8 +21,8 @@ int drive_speed = 120;
 int current_speed = drive_speed;
 
 // Constants for stepper step size and speed change
-int step_size = 5;
-int speed_change = 10;
+int step_size = 4;
+int speed_change = 7;
 
 // Mode control for easier driving
 bool normal_mode = true;
@@ -105,7 +105,10 @@ void stopVehicle() {
 }
 
 void changeSpeed(int speed) {
-	  Console.println(speed);
+	  //Console.println(speed);
+    if (speed < 0) {
+      speed = 0;
+    }
 	  dcMotorFR->setSpeed(speed);  
     dcMotorFL->setSpeed(speed);
     dcMotorBR->setSpeed(speed);
@@ -165,7 +168,7 @@ void loop() {
             }
 
             else {
-              turnRight(drive_speed);
+              turnLeft(drive_speed);
             }
         } 
         
@@ -175,7 +178,7 @@ void loop() {
             }
 
             else {
-              turnLeft(drive_speed);
+              turnRight(drive_speed);
             }
         } 
    
@@ -204,6 +207,7 @@ void loop() {
 
       else if (c == 'm' || c == 'M') {
         normal_mode = !normal_mode;
+        Console.println(normal_mode);
       }
   	}
 
@@ -213,4 +217,5 @@ void loop() {
   		  changeSpeed(current_speed);
       }
   	}
+   delay(10);
 }
