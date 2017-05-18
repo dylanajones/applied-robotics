@@ -20,6 +20,9 @@ Adafruit_MotorShield Stepper_Shield = Adafruit_MotorShield(0x60);
 int drive_speed = 120;
 int current_speed = drive_speed;
 
+const int max_speed = 240;
+const int min_speed = 0;
+
 // Constants for stepper step size and speed change
 int step_size = 4;
 int speed_change = 7;
@@ -36,69 +39,90 @@ Adafruit_DCMotor *dcMotorBL = DC_Shield.getMotor(4);
 // Getting the stepper motor
 Adafruit_StepperMotor *stepper = Stepper_Shield.getStepper(200,1);
 
+int speedCheck(int speed) {
+    if (speed > max_speed) {
+      speed = max_speed;
+    }
+
+    else if (speed < min_speed) {
+      speed = min_speed;
+    }
+
+    return speed;
+
+}
+
 // Function to move the vehicle forward
-void moveForward(int speed) {
-	dcMotorFR->run(FORWARD);
+void moveForward() {
+	  dcMotorFR->run(FORWARD);
     dcMotorFL->run(FORWARD);
     dcMotorBR->run(FORWARD);
     dcMotorBL->run(FORWARD);
-        
-    dcMotorFR->setSpeed(speed);  
-    dcMotorFL->setSpeed(speed);
-    dcMotorBR->setSpeed(speed);
-    dcMotorBL->setSpeed(speed);
-
+    
     current_speed = drive_speed;
+
+    dcMotorFR->setSpeed(current_speed);  
+    dcMotorFL->setSpeed(current_speed);
+    dcMotorBR->setSpeed(current_speed);
+    dcMotorBL->setSpeed(current_speed);
+
+    
 }
 
 // Function to move the vehicle backward
-void moveBackward(int speed) {
-	dcMotorFR->run(BACKWARD);
+void moveBackward() {
+	  dcMotorFR->run(BACKWARD);
     dcMotorFL->run(BACKWARD);
     dcMotorBR->run(BACKWARD);
     dcMotorBL->run(BACKWARD);
-        
-    dcMotorFR->setSpeed(speed);  
-    dcMotorFL->setSpeed(speed);
-    dcMotorBR->setSpeed(speed);
-    dcMotorBL->setSpeed(speed);
-
+    
     current_speed = drive_speed;
+
+    dcMotorFR->setSpeed(current_speed);  
+    dcMotorFL->setSpeed(current_speed);
+    dcMotorBR->setSpeed(current_speed);
+    dcMotorBL->setSpeed(current_speed);
+
+    
 }
 
 // Function to turn left
-void turnLeft(int speed) {
+void turnLeft() {
 	dcMotorFR->run(FORWARD);
     dcMotorFL->run(BACKWARD);
     dcMotorBR->run(FORWARD);
     dcMotorBL->run(BACKWARD);
-        
-    dcMotorFR->setSpeed(drive_speed);  
-    dcMotorFL->setSpeed(drive_speed);
-    dcMotorBR->setSpeed(drive_speed);
-    dcMotorBL->setSpeed(drive_speed);
-
+    
     current_speed = drive_speed;
+
+    dcMotorFR->setSpeed(speedCheck(current_speed + 30));  
+    dcMotorFL->setSpeed(speedCheck(current_speed + 30));
+    dcMotorBR->setSpeed(speedCheck(current_speed + 30));
+    dcMotorBL->setSpeed(speedCheck(current_speed + 30));
+
+    
 }
 
 // Function to turn right
-void turnRight(int speed) {
-	dcMotorFR->run(BACKWARD);
+void turnRight() {
+	  dcMotorFR->run(BACKWARD);
     dcMotorFL->run(FORWARD);
     dcMotorBR->run(BACKWARD);
     dcMotorBL->run(FORWARD);
-        
-    dcMotorFR->setSpeed(drive_speed);  
-    dcMotorFL->setSpeed(drive_speed);
-    dcMotorBR->setSpeed(drive_speed);
-    dcMotorBL->setSpeed(drive_speed);
-
+    
     current_speed = drive_speed;
+
+    dcMotorFR->setSpeed(speedCheck(current_speed + 30));  
+    dcMotorFL->setSpeed(speedCheck(current_speed + 30));
+    dcMotorBR->setSpeed(speedCheck(current_speed + 30));
+    dcMotorBL->setSpeed(speedCheck(current_speed + 30));
+
+    
 }
 
 // Function to stop the vehicle
 void stopVehicle() {
-	dcMotorFR->run(RELEASE);
+	  dcMotorFR->run(RELEASE);
     dcMotorFL->run(RELEASE);
     dcMotorBR->run(RELEASE);
     dcMotorBL->run(RELEASE);
@@ -106,9 +130,6 @@ void stopVehicle() {
 
 void changeSpeed(int speed) {
 	  //Console.println(speed);
-    if (speed < 0) {
-      speed = 0;
-    }
 	  dcMotorFR->setSpeed(speed);  
     dcMotorFL->setSpeed(speed);
     dcMotorBR->setSpeed(speed);
@@ -144,41 +165,41 @@ void loop() {
         
         if (c == 'f' || c == 'F') {
           	if (normal_mode) {
-                moveForward(drive_speed);
+                moveForward();
             }
 
             else {
-                moveBackward(drive_speed);
+                moveBackward();
             }
         }
         
         else if (c == 'b' || c == 'B') {
           	if (normal_mode) {
-              moveBackward(drive_speed);
+              moveBackward();
             }
 
             else {
-              moveForward(drive_speed);
+              moveForward();
             }
         } 
        	
        	else if (c == 'l' || c == 'L') {
           	if (normal_mode) {
-              turnLeft(drive_speed);
+              turnLeft();
             }
 
             else {
-              turnLeft(drive_speed);
+              turnLeft();
             }
         } 
         
         else if (c == 'r' || c == 'R') {
           	if (normal_mode) {
-              turnRight(drive_speed);
+              turnRight();
             }
 
             else {
-              turnRight(drive_speed);
+              turnRight();
             }
         } 
    
@@ -187,12 +208,12 @@ void loop() {
   		} 
 
   		else if (c == 'w' || c == 'W') {
-    		drive_speed = drive_speed + speed_change;
+    		drive_speed = speedCheck(drive_speed + speed_change);
     		Console.println(drive_speed);
   		} 
 
   		else if (c == 'x' || c == 'X') {
-    		drive_speed = drive_speed - speed_change;
+    		drive_speed = speedCheck(drive_speed - speed_change);
     		Console.println(drive_speed);
   		} 
 
@@ -213,7 +234,7 @@ void loop() {
 
   	else {
       if (current_speed > 0) {
-  		  current_speed = current_speed - speed_change;
+  		  current_speed = speedCheck(current_speed - speed_change);
   		  changeSpeed(current_speed);
       }
   	}
