@@ -20,15 +20,18 @@ Adafruit_MotorShield Stepper_Shield = Adafruit_MotorShield(0x60);
 int drive_speed = 120;
 int current_speed = drive_speed;
 
-const int max_speed = 240;
+const int max_speed = 255;
 const int min_speed = 0;
 
 // Constants for stepper step size and speed change
-int step_size = 4;
-int speed_change = 7;
+int step_size = 3;
+int speed_change = 12;
 
 // Mode control for easier driving
 bool normal_mode = true;
+
+// Turn boost
+const int boost = 40;
 
 // Getting the 4 DC motors - named by location
 Adafruit_DCMotor *dcMotorFR = DC_Shield.getMotor(1);
@@ -95,10 +98,10 @@ void turnLeft() {
     
     current_speed = drive_speed;
 
-    dcMotorFR->setSpeed(speedCheck(current_speed + 30));  
-    dcMotorFL->setSpeed(speedCheck(current_speed + 30));
-    dcMotorBR->setSpeed(speedCheck(current_speed + 30));
-    dcMotorBL->setSpeed(speedCheck(current_speed + 30));
+    dcMotorFR->setSpeed(speedCheck(current_speed + boost));  
+    dcMotorFL->setSpeed(speedCheck(current_speed + boost));
+    dcMotorBR->setSpeed(speedCheck(current_speed + boost));
+    dcMotorBL->setSpeed(speedCheck(current_speed + boost));
 
     
 }
@@ -112,10 +115,10 @@ void turnRight() {
     
     current_speed = drive_speed;
 
-    dcMotorFR->setSpeed(speedCheck(current_speed + 30));  
-    dcMotorFL->setSpeed(speedCheck(current_speed + 30));
-    dcMotorBR->setSpeed(speedCheck(current_speed + 30));
-    dcMotorBL->setSpeed(speedCheck(current_speed + 30));
+    dcMotorFR->setSpeed(speedCheck(current_speed + boost));  
+    dcMotorFL->setSpeed(speedCheck(current_speed + boost));
+    dcMotorBR->setSpeed(speedCheck(current_speed + boost));
+    dcMotorBL->setSpeed(speedCheck(current_speed + boost));
 
     
 }
@@ -134,6 +137,12 @@ void changeSpeed(int speed) {
     dcMotorFL->setSpeed(speed);
     dcMotorBR->setSpeed(speed);
     dcMotorBL->setSpeed(speed);
+}
+
+void pulseStepper() {
+
+  stepper->step(1,BACKWARD,MICROSTEP);
+  stepper->step(1,FORWARD,MICROSTEP);
 }
 
 // Setup code
@@ -219,11 +228,11 @@ void loop() {
 
   		else if (c == 'q' || c == 'Q') {
     		Console.println("Stepping Forward");
-    		stepper->step(step_size,FORWARD,SINGLE);  
+    		stepper->step(step_size,FORWARD,MICROSTEP);  
   		} 
   		else if (c == 'z' || c == 'Z') {
     		Console.println("Stepping Backward");
-    		stepper->step(step_size,BACKWARD,SINGLE);
+    		stepper->step(step_size,BACKWARD,MICROSTEP);
   		}
 
       else if (c == 'm' || c == 'M') {
@@ -237,6 +246,9 @@ void loop() {
   		  current_speed = speedCheck(current_speed - speed_change);
   		  changeSpeed(current_speed);
       }
+
+      //pulseStepper();
+      
   	}
    delay(10);
 }
